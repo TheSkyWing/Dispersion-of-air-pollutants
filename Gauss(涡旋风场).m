@@ -98,7 +98,7 @@ for t = 0:dt:T_end
             terrain_height = terrain(x, y);
 
             if particles(i, 3) < terrain_height
-                % 新增机制：90% 概率沉积，10% 概率反弹
+                % 90% 概率沉积，10% 概率反弹
                 if rand < 0.9
                     absorbed(i) = true;
                     deposit_time(i) = t;
