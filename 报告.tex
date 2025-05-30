@@ -137,26 +137,30 @@ C(x, y, z) = \frac{Q}{2\pi u \sigma_y \sigma_z}
 	
 	
 	结合上面的公式即可用高斯烟羽模型模拟稳态情况下的扩散情况。
-	
-	\section*{\centerline{三、符号说明}}
-	\begin{table}[t]
-		\caption{\textbf{符号说明}}%标题
-		\centering%把表居中
-		\begin{tabular}{ccc}%内容全部居中
-			\toprule%第一道横线
-			符号&说明&单位 \\
-			\midrule%第二道横线 
-			$\alpha$ &description of $alpha$ & xx \\
-			$\beta$ & description of $beta$ & xx \\
-			\bottomrule%第三道横线
-		\end{tabular}
-	\end{table}
-	
-	\setcounter{section}{6}
+	\subsection{其余细节}
+	除去拉格朗日粒子模型和高斯烟羽模型，我们还尝试了加入一些其他模型，例如用对数风廓线模型刻画风速$u$随着高度$z$的变化 ：
+	\[ u(z)=\dfrac{u_*}{\kappa}ln(\dfrac{z-d}{z_0}) \]
+	其中
+    \begin{itemize}
+    	\item $u_*$表示磨擦速度，反映地表剪切应力大小，单位为$m/s$
+    	\item $\kappa$是von Kármán常数，可取$0.4$
+    	\item $d$是地表障碍物高度，一般取$0$即可
+    	\item $z_0$表示地面粗糙度长度，单位为$m$
+    \end{itemize}
+    \indent 考虑到$u_*$的求解并不容易，我们通过给定某处的风速进行推算，例如如果给定了$z_{ref}$处的风速$u_{ref}$，那么有
+    \[ u_* = \frac{u_{\text{ref}} \cdot \kappa}{\ln\left( \frac{z_{\text{ref}}}{z_0} \right)}
+     \]
+     \indent 那么原公式就等价于
+     \[ u(z) = u_{\text{ref}} \cdot \frac{\ln\left(\dfrac{z}{z_0}\right)}{\ln\left(\dfrac{z_{\text{ref}}}{z_0}\right)}
+      \]
+      \indent 这就变成了容易的形式。\\
+      \indent 此外拉格朗日模型部分中，当粒子接触到地面，我们假设他会以适当比例沉积与反弹，这部分并无特别公式模型，故不再赘述。
+
+
 	\section*{\centerline{四、程序的实现}}
 	你建立的数学模型和算法的描述 
 	
-	\setcounter{section}{7}
+
 	\section*{\centerline{五、结果（与对比）}}
 	你的算法产生的结果，如果有多种算法产生的结果，需要做对比。
 	\subsection{结果展示}
@@ -164,16 +168,41 @@ C(x, y, z) = \frac{Q}{2\pi u \sigma_y \sigma_z}
 	
 	\subsection{结果对比}
 	
-	\setcounter{section}{8}
+
 	\section*{\centerline{六、结论}}
 	实验产生了何种结论  
 	
-	\setcounter{section}{9}
+
 	\section*{\centerline{七、问题}}
 	解决问题的过程中你是否发现的新的问题，或者算法仍然存在改进的地方？  
+	\newpage
 	
-	\cite{pasquill1961estimation}
-	\cite{draxler1997description}
+	\begin{table}[!htbp]
+		\caption{\textbf{符号说明}}%标题
+		\centering%把表居中
+		\begin{tabular}{ccc}%内容全部居中
+			\toprule%第一道横线
+			符号&说明&单位 \\
+			\midrule%第二道横线 
+			$\vec{X}(t)$ & 粒子在$t$时刻所处的位置向量&  $m$\\
+			$\vec{U}(t)$ & $t$时刻$\vec{X}$位置的环境风场 &  $m/s$\\
+			$\vec{R}(t)$ & $t$时刻湍流扰动 & $m/s$\\
+			$C(x,y,z)$   & 污染物在$(x,y,z)$处的浓度 &$g/m^3$ \\
+	    	$Q$          & 源强 & $g/m$ \\
+		    $H$          &有效排放距离 &$m$\\
+			$ \sigma_y,\sigma_z $& 扩散系数 &  \\
+			$u_*$ 磨擦速度&  $m/s$\\
+			$\kappa$     &von Kármán常数&  \\
+			$d$          & 地表障碍物高度 & $m$\\
+		   $z_0$         & 地面粗糙度长度 &  $m$\\
+			\bottomrule%第三道横线
+	
+		
+		\end{tabular}
+	\end{table}
+	
+	\nocite{pasquill1961estimation}
+	\nocite{draxler1997description}
 	\bibliographystyle{ieeetr}
 	\bibliography{refer}
 	
