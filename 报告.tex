@@ -3,6 +3,12 @@
 \usepackage[tc]{titlepic}
 \usepackage{titlesec}
 \usepackage{cite}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{paralist}
+\usepackage{geometry}
+\usepackage{listings}
 \usepackage{fancyhdr}
 \usepackage{booktabs}
 \usepackage{graphicx}
@@ -41,22 +47,54 @@
 	\indent 污染物在大气中的传输扩散过程受多种因素影响，包括风场结构、湍流强度、地形起伏以及大气热力稳定度等。这一过程具有高度的非线性和不确定性，因此，建立合理的扩散模型成为研究污染物扩散机制的关键。\\
 	\indent 目前常用的扩散模型主要包括高斯烟羽模型与拉格朗日粒子模型。高斯烟羽模型由于计算简便、物理含义清晰，广泛用于污染物在匀速风场和稳态条件下的估算。但该模型假设较强，难以适应非稳态、非均匀风场或复杂地形条件下的模拟。而拉格朗日粒子模型则通过追踪大量粒子在风场与扩散场中的运动轨迹，能够灵活地处理不规则边界、非均匀风速和瞬态过程，具有更高的精度和适应性。\\
 	\indent 本文旨在比较两种模型在不同气象与地形条件下模拟PM2.5扩散的性能差异。我们基于MATLAB平台，结合全球地形数据构建了具备旋转风场、匀速风场与真实地形条件的模拟系统，分别实现了高斯烟羽模型与拉格朗日粒子模型的扩散模拟。在对比模拟结果的基础上，分析了风场结构、地形起伏对污染物分布形态与沉积分布的影响，为后续的污染源追踪提供理论支持和参考。
-	\setcounter{section}{2}
-	\section*{\centerline{二、相关工作}}
-	引用文献\upcite{946629}
-	\setcounter{section}{3}
-	\section*{\centerline{三、问题分析}}
-	你的问题分析
-	\subsection{分析1}
-	\subsection{分析2}
-	\setcounter{section}{4}
-	\section*{\centerline{四、建模的假设}}
-	你的模型假设 
-	\subsection{假设1}
-	\subsection{假设2}
 	
-	\setcounter{section}{5}
-	\section*{\centerline{五、符号说明}}
+	
+	
+	\section*{\centerline{二、模型的原理与建立}}
+	\subsection{拉格朗日粒子模型}
+	拉格朗日模型的考虑对象是每个污染物粒子的扩散轨迹，它认为每个粒子的运动轨迹都遵从下面的随机微分方程描述：
+	\[ \dfrac{d\vec{X}}{dt}=\vec{U}(\vec{X},t)+\vec{R}(t) \]
+	其中
+	\begin{itemize}
+		\item $ \vec{X}=(x,y,z)$表示粒子在$t$时刻所处的位置向量
+		\item $\vec{U}(\vec{X},t)=(u_x,u_y,u_z)$表示$ t$时刻$\vec{X}$位置的环境风场
+		\item $\vec{R}(t) $表示$t$时刻湍流扰动
+	\end{itemize}
+	
+	
+	\indent 湍流扰动$\vec{R}(t) $一般采用随机游走模型：
+	\[ \vec{R}(t)=\dfrac{d\vec{X_d}}{dt}=\dfrac{\sqrt{2K}dW(t)}{dt} \]
+	其中
+	\begin{itemize}
+		\item $ K=(K_x,K_y,K_z)$是扩散系数，每项单位通常是$m^2/s$，表示单位时间内粒子运动扩散的强度
+		\item $W(t)$表示三项独立的标准布朗运动
+	\end{itemize}
+	
+	
+	结合可知
+	\begin{align}
+		d\vec{X}&=\vec{U}(\vec{X},t)dt+\vec{R}(t)dt\\
+		&= \vec{U}(\vec{X},t)dt+\sqrt{2K}dW(t)\\
+		&=\vec{U}(\vec{X},t)dt+\sqrt{2Kdt}R
+	\end{align}
+	\begin{itemize}
+		\item $R=(R_x,R_y,R_z)$表示三向独立的标准正态分布
+	\end{itemize}
+	
+	
+	也即
+	\begin{align}
+		\Delta x&= \vec{U}(\vec{X},t)\Delta t+\sqrt{2K\Delta t}R\\
+		\vec{X}_{t+\Delta t}&=\vec{X}_t  + \vec{U}(\vec{X},t)\Delta t+\sqrt{2K\Delta t}R
+	\end{align}
+	
+	
+	根据经验结论$K$各个分量均可以取$0.4$，因此只要给出风场条件和粒子坐标，我们可以容易地利用这个模型给出粒子运动预测
+	
+	\subsection{高斯烟羽模型}
+	
+	
+	\section*{\centerline{三、符号说明}}
 	\begin{table}[t]
 		\caption{\textbf{符号说明}}%标题
 		\centering%把表居中
@@ -71,11 +109,11 @@
 	\end{table}
 	
 	\setcounter{section}{6}
-	\section*{\centerline{六、数学模型建立}}
+	\section*{\centerline{四、程序的实现}}
 	你建立的数学模型和算法的描述 
 	
 	\setcounter{section}{7}
-	\section*{\centerline{七、结果（与对比）}}
+	\section*{\centerline{五、结果（与对比）}}
 	你的算法产生的结果，如果有多种算法产生的结果，需要做对比。
 	\subsection{结果展示}
 	引用图片
@@ -83,11 +121,11 @@
 	\subsection{结果对比}
 	
 	\setcounter{section}{8}
-	\section*{\centerline{八、结论}}
+	\section*{\centerline{六、结论}}
 	实验产生了何种结论  
 	
 	\setcounter{section}{9}
-	\section*{\centerline{九、问题}}
+	\section*{\centerline{七、问题}}
 	解决问题的过程中你是否发现的新的问题，或者算法仍然存在改进的地方？  
 	
 	\cite{pasquill1961estimation}
