@@ -12,10 +12,79 @@
 \usepackage{fancyhdr}
 \usepackage{booktabs}
 \usepackage{graphicx}
+\usepackage{listingsutf8}
 \usepackage{geometry}
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstset{
+	basicstyle          =   \ttfamily,          % 基本代码风格
+	keywordstyle        =   \bfseries,          % 关键字风格
+	commentstyle        =   \rmfamily\itshape,  % 注释的风格，斜体
+	stringstyle         =   \ttfamily,  		% 字符串风格
+	xleftmargin         =   -10pt,
+	flexiblecolumns,                
+	numbers             =   left,   			% 行号的位置在左边
+	showspaces          =   false,  			% 是否显示空格，显示了有点乱，所以不现实了
+	numberstyle         =   \zihao{-5}\ttfamily,% 行号的样式，小五号，tt等宽字体
+	showstringspaces    =   false,
+	captionpos          =   t,      			% 这段代码的名字所呈现的位置，t指的是top上面
+	frame               =   lrtb,   			% 显示边框
+}
+
+\lstdefinestyle{C}{	
+	language        =   C, 				
+	basicstyle      =   \zihao{-5}\ttfamily,
+	numberstyle     =   \zihao{-5}\ttfamily,
+	keywordstyle    =   \color{blue},
+	keywordstyle    =   [2] \color{teal},
+	stringstyle     =   \color{magenta},
+	commentstyle    =   \color{red}\ttfamily,
+	breaklines      =   true,   				
+	columns         =   fixed,  			
+	% basewidth       =   0.5em,
+}
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+\lstset{
+	basicstyle=\ttfamily,
+	keywordstyle=\color{blue}\bfseries,
+	commentstyle=\color{gray},
+	breaklines=true,
+	columns=fullflexible,      % 关键：允许中文断行显示
+	keepspaces=true,
+	escapeinside={}{},       % 支持插入 LaTeX 指令
+	extendedchars=false  ,     % 不要使用 extended characters
+	inputencoding=utf8,      
+}
+
+
 \usepackage[section]{placeins}
 \geometry{a4paper,scale=0.8}
 \pagestyle{fancy}
+
+\usepackage{ctex}
+\usepackage{CJKutf8}
+
 
 \lhead{大气污染物扩散的粒子追踪\\\today}
 \chead{中国科学技术大学\\数学建模课程}
@@ -40,7 +109,7 @@
 	\end{abstract}
 	\clearpage
 	
-	\setcounter{section}{1}
+	\setcounter{section}{2}
 	\section*{\centerline{一、前言}}
 	
 	随着城市迅速发展，人类活动排放的空气污染物种类和数量不断增加，其中以PM2.5为代表的细颗粒物因其对人体健康和生态环境的严重影响而受到广泛关注。准确模拟和预测污染物在大气中的扩散规律，已成为一个重要研究课题。\\
@@ -93,29 +162,29 @@
 	
 	\subsection{高斯烟羽模型}
 	高斯烟羽模型的核心公式如下：
-\[
-C(x, y, z) = \frac{Q}{2\pi u \sigma_y \sigma_z} 
-\exp\left( -\frac{y^2}{2\sigma_y^2} \right) 
-\left(
-\exp\left( -\frac{(z - H)^2}{2\sigma_z^2} \right)
-+ 
-\exp\left( -\frac{(z + H)^2}{2\sigma_z^2} \right)
-\right)
-\]
-其中
-\begin{itemize}
-	\item $C(x,y,z)$表示污染物在$(x,y,z)$处的浓度，单位为$g/m^3$
-	\item $Q$为源强，单位为$g/m$
-	\item $u$为风速，单位为$m/s$
-	\item $H$为有效排放距离，单位为$m$
-	\item $ \sigma_y,\sigma_z $为扩散系数，表示在横向和纵向的标准差
-	\item $x$为下风方向距离，单位为$m$
-	\item $y$横线偏移距离，单位为$m$
-	\item $z$垂直高度，单位为$m$
-\end{itemize}
+	\[
+	C(x, y, z) = \frac{Q}{2\pi u \sigma_y \sigma_z} 
+	\exp\left( -\frac{y^2}{2\sigma_y^2} \right) 
+	\left(
+	\exp\left( -\frac{(z - H)^2}{2\sigma_z^2} \right)
+	+ 
+	\exp\left( -\frac{(z + H)^2}{2\sigma_z^2} \right)
+	\right)
+	\]
+	其中
+	\begin{itemize}
+		\item $C(x,y,z)$表示污染物在$(x,y,z)$处的浓度，单位为$g/m^3$
+		\item $Q$为源强，单位为$g/m$
+		\item $u$为风速，单位为$m/s$
+		\item $H$为有效排放距离，单位为$m$
+		\item $ \sigma_y,\sigma_z $为扩散系数，表示在横向和纵向的标准差
+		\item $x$为下风方向距离，单位为$m$
+		\item $y$横线偏移距离，单位为$m$
+		\item $z$垂直高度，单位为$m$
+	\end{itemize}
 	
 	
-\indent 	特别的，对于其中的扩散系数$ \sigma_y,\sigma_z $有如下经验公式：
+	\indent 	特别的，对于其中的扩散系数$ \sigma_y,\sigma_z $有如下经验公式：
 	\[ \sigma_y(x)=ax^b\hspace{1em} ,\hspace{1em} \sigma_z(x)=cx^d\]
 	\indent 具体$a,b,c,d$依据大气等级而定，为了更快的扩散速率以便观察，我们可以取$a=c=0.5,b=d=0.8$。\\
 	\indent 需要注意的是$H$并不等同于源的高度，实际上由于烟喷出时的动能，和烟气温度高于周围气体产生的密度差，使得烟气有效排放高度会提升一段距离，这就是烟气抬升效应。这里我们考虑的是静态的情况，温差产生的浮力抬升占据主导，动能抬升的影响忽略。\\
@@ -141,39 +210,140 @@ C(x, y, z) = \frac{Q}{2\pi u \sigma_y \sigma_z}
 	除去拉格朗日粒子模型和高斯烟羽模型，我们还尝试了加入一些其他模型，例如用对数风廓线模型刻画风速$u$随着高度$z$的变化 ：
 	\[ u(z)=\dfrac{u_*}{\kappa}ln(\dfrac{z-d}{z_0}) \]
 	其中
-    \begin{itemize}
-    	\item $u_*$表示磨擦速度，反映地表剪切应力大小，单位为$m/s$
-    	\item $\kappa$是von Kármán常数，可取$0.4$
-    	\item $d$是地表障碍物高度，一般取$0$即可
-    	\item $z_0$表示地面粗糙度长度，单位为$m$
-    \end{itemize}
-    \indent 考虑到$u_*$的求解并不容易，我们通过给定某处的风速进行推算，例如如果给定了$z_{ref}$处的风速$u_{ref}$，那么有
-    \[ u_* = \frac{u_{\text{ref}} \cdot \kappa}{\ln\left( \frac{z_{\text{ref}}}{z_0} \right)}
-     \]
-     \indent 那么原公式就等价于
-     \[ u(z) = u_{\text{ref}} \cdot \frac{\ln\left(\dfrac{z}{z_0}\right)}{\ln\left(\dfrac{z_{\text{ref}}}{z_0}\right)}
-      \]
-      \indent 这就变成了容易的形式。\\
-      \indent 此外拉格朗日模型部分中，当粒子接触到地面，我们假设他会以适当比例沉积与反弹，这部分并无特别公式模型，故不再赘述。
-
-
-	\section*{\centerline{四、程序的实现}}
-	你建立的数学模型和算法的描述 
+	\begin{itemize}
+		\item $u_*$表示磨擦速度，反映地表剪切应力大小，单位为$m/s$
+		\item $\kappa$是von Kármán常数，可取$0.4$
+		\item $d$是地表障碍物高度，一般取$0$即可
+		\item $z_0$表示地面粗糙度长度，单位为$m$
+	\end{itemize}
+	\indent 考虑到$u_*$的求解并不容易，我们通过给定某处的风速进行推算，例如如果给定了$z_{ref}$处的风速$u_{ref}$，那么有
+	\[ u_* = \frac{u_{\text{ref}} \cdot \kappa}{\ln\left( \frac{z_{\text{ref}}}{z_0} \right)}
+	\]
+	\indent 那么原公式就等价于
+	\[ u(z) = u_{\text{ref}} \cdot \frac{\ln\left(\dfrac{z}{z_0}\right)}{\ln\left(\dfrac{z_{\text{ref}}}{z_0}\right)}
+	\]
+	\indent 这就变成了容易的形式。\\
+	\indent 此外拉格朗日模型部分中，当粒子接触到地面，我们假设他会以适当比例沉积与反弹，这部分并无特别公式模型，故不再赘述。
 	
-
-	\section*{\centerline{五、结果（与对比）}}
+	\setcounter{section}{3}
+	\setcounter{subsection}{0}
+	\section*{\centerline{三、程序的实现}}
+	\addcontentsline{toc}{section}{三、程序的实现}
+	\subsection{考虑对数风廓线的拉格朗日模型}
+	我们采用正弦波来模拟坡度较小的平缓地面。
+	\begin{lstlisting}
+		A1 = 300; f1 = 0.0001;   
+		A2 = 200; f2 = 0.0003;  
+		terrain = @(x,y) A1 * sin(2*pi*f1*x) .* sin(2*pi*f1*y) + ...
+		A2 * sin(2*pi*f2*x) .* sin(2*pi*f2*y);\end{lstlisting}
+	\indent 根据风廓线模型进行风速计算的关键步骤如下，具体公式变形原理前面已经解释，此处不再赘述：
+	\begin{lstlisting}
+		u_local = (u_ref * log(max(h_above_ground, z0+0.01)/z0)) / log(z_ref/z0);
+		v_local = zeros(numActive, 1);
+		w_local = zeros(numActive, 1);\end{lstlisting}
+	\indent 接着通过拉格朗日模型公式和求解出的风速对每个粒子的位置进行更新。
+	\begin{lstlisting}
+		dx = u_local * dt + sqrt(2*Kx*dt) * randn(numActive, 1);
+		dy = v_local * dt + sqrt(2*Ky*dt) * randn(numActive, 1);
+		dz = w_local * dt + sqrt(2*Kz*dt) * randn(numActive, 1);
+		
+		particles(active_idx, 1) = active_particles(:,1) + dx;
+		particles(active_idx, 2) = active_particles(:,2) + dy;
+		particles(active_idx, 3) = active_particles(:,3) + dz;\end{lstlisting}
+	\indent 由于此处的假设地形坡度较低，我们假设粒子与地面碰撞后会完全沉积，并在后续可视化操作中对乘沉积的粒子进行特殊标色。
+	\begin{lstlisting}
+		for i = find(active_idx)'
+		x = particles(i, 1);
+		y = particles(i, 2);
+		terrain_height = terrain(x, y);
+		if particles(i, 3) < terrain_height
+		absorbed(i) = true;
+		end
+		end\end{lstlisting}
+	\subsection{涡旋风场下的拉格朗日模型}
+	\indent 这里我们选择使用matlab自带的全球地形数据topo截取一段山地地形进行模拟，并且假设自然环境中有着涡旋风场。\\
+	\indent 先设定涡旋风场的基本参数
+	\begin{lstlisting}
+		vortex_center = [500000, 500000];  % 距涡旋中心500km
+		vortex_strength = 5e6;             % 涡旋强度 (<1000km)
+		max_wind_speed = 20.0;             % 最大风速 (m/s)
+		wind_direction = 1;                % 1逆时针, -1顺时针
+		Kx = 100; Ky = 100; Kz = 10;       % 扩散系数 \end{lstlisting}
+	\indent 接着计算旋转风场函数
+	\begin{lstlisting}
+		function [u, v, w] = vortex_velocity(x, y, vortex_center, vortex_strength, ...
+		max_wind_speed, wind_direction)
+		dx = x - vortex_center(1);
+		dy = y - vortex_center(2);
+		r = sqrt(dx.^2 + dy.^2);
+		r(r < 1000) = 1000;  % 避免中心处奇异值
+		
+		% 计算切向速度
+		tangential_velocity = vortex_strength ./ r;
+		tangential_velocity = min(tangential_velocity, max_wind_speed);
+		
+		u=-wind_direction*tangential_velocity.*dy./r;
+		v=wind_direction*tangential_velocity.*dx./r;
+		
+		% 垂直风速 
+		w = zeros(size(x));
+		center_distance=r;
+		w(center_distance<200000)=0.5*...
+		(1-center_distance(center_distance < 200000)/200000);
+		end\end{lstlisting}
+	\indent 周期更新粒子位置
+	\begin{lstlisting}
+		[u_local, v_local, w_local] = vortex_velocity(... 
+		active_particles(:,1), active_particles(:,2), ...
+		vortex_center, vortex_strength, max_wind_speed, wind_direction);
+		
+		dx = u_local * dt + sqrt(2*Kx*dt) * randn(numActive, 1);
+		dy = v_local * dt + sqrt(2*Ky*dt) * randn(numActive, 1);
+		dz = w_local * dt + sqrt(2*Kz*dt) * randn(numActive, 1);
+		
+		particles(active_idx, 1) = active_particles(:,1) + dx;
+		particles(active_idx, 2) = active_particles(:,2) + dy;
+		particles(active_idx, 3) = active_particles(:,3) + dz;
+	\end{lstlisting}
+	\indent 特别的是由于风速较快与地形坡度较大，此处我们假设碰撞到地面的粒子有$10\% $的概率进行反弹，不会静止而是将高度反向抬升后继续运动
+	\begin{lstlisting}
+		for i = find(active_idx)'
+		x = particles(i, 1);
+		y = particles(i, 2);
+		terrain_height = terrain(x, y);
+		if particles(i, 3) < terrain_height
+		if rand < 0.9
+		absorbed(i) = true;
+		deposit_time(i) = t;
+		deposit_position(i, :) = [x, y, terrain_height];
+		else 
+		rebounded(i) = true;
+		particles(i,3) = terrain_height + 10; % 反弹10米高度
+		end
+		end
+		end\end{lstlisting}
+	\subsection{稳态下的高斯烟羽模型}
+	\indent 高斯烟羽模型相较于拉格朗日模型没有复杂的粒子运动过程，而是稳态下的浓度分布，这一部分公式如下：
+	\begin{lstlisting}
+		term1 = exp(-(Y.^2)./(2*sig_y.^2));
+		term2 = exp(-(Z - H_eff_grid).^2./(2*sig_z.^2)) + ...
+		exp(-(Z + H_eff_grid).^2./(2*sig_z.^2));
+		C = Q0./(2*pi*u0.*sig_y.*sig_z) .* term1 .* term2;\end{lstlisting}
+	\indent 其中烟气抬升部分也分类较为繁琐且并非核心部分，此处也不再赘述。\\
+	为了更直观地看到浓度分布，我们截取了部分截面与切面，在结果部分进行展示。
+	\section*{\centerline{四、结果（与对比）}}
 	你的算法产生的结果，如果有多种算法产生的结果，需要做对比。
 	\subsection{结果展示}
 	引用图片
 	
 	\subsection{结果对比}
 	
-
-	\section*{\centerline{六、结论}}
+	
+	\section*{\centerline{五、结论}}
 	实验产生了何种结论  
 	
-
-	\section*{\centerline{七、问题}}
+	
+	\section*{\centerline{六、问题}}
 	解决问题的过程中你是否发现的新的问题，或者算法仍然存在改进的地方？  
 	\newpage
 	
@@ -188,16 +358,16 @@ C(x, y, z) = \frac{Q}{2\pi u \sigma_y \sigma_z}
 			$\vec{U}(t)$ & $t$时刻$\vec{X}$位置的环境风场 &  $m/s$\\
 			$\vec{R}(t)$ & $t$时刻湍流扰动 & $m/s$\\
 			$C(x,y,z)$   & 污染物在$(x,y,z)$处的浓度 &$g/m^3$ \\
-	    	$Q$          & 源强 & $g/m$ \\
-		    $H$          &有效排放距离 &$m$\\
+			$Q$          & 源强 & $g/m$ \\
+			$H$          &有效排放距离 &$m$\\
 			$ \sigma_y,\sigma_z $& 扩散系数 &  \\
 			$u_*$ 磨擦速度&  $m/s$\\
 			$\kappa$     &von Kármán常数&  \\
 			$d$          & 地表障碍物高度 & $m$\\
-		   $z_0$         & 地面粗糙度长度 &  $m$\\
+			$z_0$         & 地面粗糙度长度 &  $m$\\
 			\bottomrule%第三道横线
-	
-		
+			
+			
 		\end{tabular}
 	\end{table}
 	
