@@ -232,103 +232,103 @@
 	\subsection{考虑对数风廓线的拉格朗日模型}
 	我们采用正弦波来模拟坡度较小的平缓地面。
 	\begin{lstlisting}
-		A1 = 300; f1 = 0.0001;   
-		A2 = 200; f2 = 0.0003;  
-		terrain = @(x,y) A1 * sin(2*pi*f1*x) .* sin(2*pi*f1*y) + ...
-		A2 * sin(2*pi*f2*x) .* sin(2*pi*f2*y);\end{lstlisting}
+	A1 = 300; f1 = 0.0001;   
+	A2 = 200; f2 = 0.0003;  
+	terrain = @(x,y) A1 * sin(2*pi*f1*x) .* sin(2*pi*f1*y) + ...
+	A2 * sin(2*pi*f2*x) .* sin(2*pi*f2*y);\end{lstlisting}
 	\indent 根据风廓线模型进行风速计算的关键步骤如下，具体公式变形原理前面已经解释，此处不再赘述：
 	\begin{lstlisting}
-		u_local = (u_ref * log(max(h_above_ground, z0+0.01)/z0)) / log(z_ref/z0);
-		v_local = zeros(numActive, 1);
-		w_local = zeros(numActive, 1);\end{lstlisting}
+	u_local = (u_ref * log(max(h_above_ground, z0+0.01)/z0)) / log(z_ref/z0);
+	v_local = zeros(numActive, 1);
+	w_local = zeros(numActive, 1);\end{lstlisting}
 	\indent 接着通过拉格朗日模型公式和求解出的风速对每个粒子的位置进行更新。
 	\begin{lstlisting}
-		dx = u_local * dt + sqrt(2*Kx*dt) * randn(numActive, 1);
-		dy = v_local * dt + sqrt(2*Ky*dt) * randn(numActive, 1);
-		dz = w_local * dt + sqrt(2*Kz*dt) * randn(numActive, 1);
+	dx = u_local * dt + sqrt(2*Kx*dt) * randn(numActive, 1);
+	dy = v_local * dt + sqrt(2*Ky*dt) * randn(numActive, 1);
+	dz = w_local * dt + sqrt(2*Kz*dt) * randn(numActive, 1);
 		
-		particles(active_idx, 1) = active_particles(:,1) + dx;
-		particles(active_idx, 2) = active_particles(:,2) + dy;
-		particles(active_idx, 3) = active_particles(:,3) + dz;\end{lstlisting}
+	particles(active_idx, 1) = active_particles(:,1) + dx;
+	particles(active_idx, 2) = active_particles(:,2) + dy;
+	particles(active_idx, 3) = active_particles(:,3) + dz;\end{lstlisting}
 	\indent 由于此处的假设地形坡度较低，我们假设粒子与地面碰撞后会完全沉积，并在后续可视化操作中对乘沉积的粒子进行特殊标色。
 	\begin{lstlisting}
-		for i = find(active_idx)'
-		x = particles(i, 1);
-		y = particles(i, 2);
-		terrain_height = terrain(x, y);
-		if particles(i, 3) < terrain_height
-		absorbed(i) = true;
-		end
-		end\end{lstlisting}
+	for i = find(active_idx)'
+	  x = particles(i, 1);
+	  y = particles(i, 2);
+	  terrain_height = terrain(x, y);
+	  if particles(i, 3) < terrain_height
+	    absorbed(i) = true;
+	  end
+	end\end{lstlisting}
 	\subsection{涡旋风场下的拉格朗日模型}
 	\indent 这里我们选择使用matlab自带的全球地形数据topo截取一段山地地形进行模拟，并且假设自然环境中有着涡旋风场。\\
 	\indent 先设定涡旋风场的基本参数
 	\begin{lstlisting}
-		vortex_center = [500000, 500000];  % 距涡旋中心500km
-		vortex_strength = 5e6;             % 涡旋强度 (<1000km)
-		max_wind_speed = 20.0;             % 最大风速 (m/s)
-		wind_direction = 1;                % 1逆时针, -1顺时针
-		Kx = 100; Ky = 100; Kz = 10;       % 扩散系数 \end{lstlisting}
+	vortex_center = [500000, 500000];  % 距涡旋中心500km
+	vortex_strength = 5e6;             % 涡旋强度 (<1000km)
+	max_wind_speed = 20.0;             % 最大风速 (m/s)
+	wind_direction = 1;                % 1逆时针, -1顺时针
+	Kx = 100; Ky = 100; Kz = 10;       % 扩散系数 \end{lstlisting}
 	\indent 接着计算旋转风场函数
 	\begin{lstlisting}
-		function [u, v, w] = vortex_velocity(x, y, vortex_center, vortex_strength, ...
-		max_wind_speed, wind_direction)
-		dx = x - vortex_center(1);
-		dy = y - vortex_center(2);
-		r = sqrt(dx.^2 + dy.^2);
-		r(r < 1000) = 1000;  % 避免中心处奇异值
+	function [u, v, w] = vortex_velocity(x, y, vortex_center, vortex_strength, ...
+	    max_wind_speed, wind_direction)
+	 dx = x - vortex_center(1);
+         dy = y - vortex_center(2);
+	  r = sqrt(dx.^2 + dy.^2);
+	  r(r < 1000) = 1000;  % 避免中心处奇异值
 		
-		% 计算切向速度
-		tangential_velocity = vortex_strength ./ r;
-		tangential_velocity = min(tangential_velocity, max_wind_speed);
+	  % 计算切向速度
+	  tangential_velocity = vortex_strength ./ r;
+	  tangential_velocity = min(tangential_velocity, max_wind_speed);
 		
-		u=-wind_direction*tangential_velocity.*dy./r;
-		v=wind_direction*tangential_velocity.*dx./r;
+	  u=-wind_direction*tangential_velocity.*dy./r;
+	  v=wind_direction*tangential_velocity.*dx./r;
 		
-		% 垂直风速 
-		w = zeros(size(x));
-		center_distance=r;
-		w(center_distance<200000)=0.5*...
-		(1-center_distance(center_distance < 200000)/200000);
-		end\end{lstlisting}
+	  % 垂直风速 
+	  w = zeros(size(x));
+	  center_distance=r;
+	  w(center_distance<200000)=0.5*...
+	  (1-center_distance(center_distance < 200000)/200000);
+	end\end{lstlisting}
 	\indent 周期更新粒子位置
 	\begin{lstlisting}
-		[u_local, v_local, w_local] = vortex_velocity(... 
-		active_particles(:,1), active_particles(:,2), ...
-		vortex_center, vortex_strength, max_wind_speed, wind_direction);
+	[u_local, v_local, w_local] = vortex_velocity(... 
+	active_particles(:,1), active_particles(:,2), ...
+	vortex_center, vortex_strength, max_wind_speed, wind_direction);
 		
-		dx = u_local * dt + sqrt(2*Kx*dt) * randn(numActive, 1);
-		dy = v_local * dt + sqrt(2*Ky*dt) * randn(numActive, 1);
-		dz = w_local * dt + sqrt(2*Kz*dt) * randn(numActive, 1);
+	dx = u_local * dt + sqrt(2*Kx*dt) * randn(numActive, 1);
+	dy = v_local * dt + sqrt(2*Ky*dt) * randn(numActive, 1);
+	dz = w_local * dt + sqrt(2*Kz*dt) * randn(numActive, 1);
 		
-		particles(active_idx, 1) = active_particles(:,1) + dx;
-		particles(active_idx, 2) = active_particles(:,2) + dy;
-		particles(active_idx, 3) = active_particles(:,3) + dz;
+	particles(active_idx, 1) = active_particles(:,1) + dx;
+	particles(active_idx, 2) = active_particles(:,2) + dy;
+	particles(active_idx, 3) = active_particles(:,3) + dz;
 	\end{lstlisting}
 	\indent 特别的是由于风速较快与地形坡度较大，此处我们假设碰撞到地面的粒子有$10\% $的概率进行反弹，不会静止而是将高度反向抬升后继续运动
 	\begin{lstlisting}
-		for i = find(active_idx)'
-		x = particles(i, 1);
-		y = particles(i, 2);
-		terrain_height = terrain(x, y);
-		if particles(i, 3) < terrain_height
-		if rand < 0.9
-		absorbed(i) = true;
-		deposit_time(i) = t;
-		deposit_position(i, :) = [x, y, terrain_height];
+	for i = find(active_idx)'
+	  x = particles(i, 1);
+	  y = particles(i, 2);
+	  terrain_height = terrain(x, y);
+	  if particles(i, 3) < terrain_height
+	    if rand < 0.9
+		  absorbed(i) = true;
+		  deposit_time(i) = t;
+		  deposit_position(i, :) = [x, y, terrain_height];
 		else 
-		rebounded(i) = true;
-		particles(i,3) = terrain_height + 10; % 反弹10米高度
-		end
-		end
-		end\end{lstlisting}
+		  rebounded(i) = true;
+		  particles(i,3) = terrain_height + 10; % 反弹10米高度
+	    end
+	  end
+	end\end{lstlisting}
 	\subsection{稳态下的高斯烟羽模型}
 	\indent 高斯烟羽模型相较于拉格朗日模型没有复杂的粒子运动过程，而是稳态下的浓度分布，这一部分公式如下：
 	\begin{lstlisting}
-		term1 = exp(-(Y.^2)./(2*sig_y.^2));
-		term2 = exp(-(Z - H_eff_grid).^2./(2*sig_z.^2)) + ...
-		exp(-(Z + H_eff_grid).^2./(2*sig_z.^2));
-		C = Q0./(2*pi*u0.*sig_y.*sig_z) .* term1 .* term2;\end{lstlisting}
+	term1 = exp(-(Y.^2)./(2*sig_y.^2));
+	term2 = exp(-(Z - H_eff_grid).^2./(2*sig_z.^2)) + ...
+	exp(-(Z + H_eff_grid).^2./(2*sig_z.^2));
+	C = Q0./(2*pi*u0.*sig_y.*sig_z) .* term1 .* term2;\end{lstlisting}
 	\indent 其中烟气抬升部分也分类较为繁琐且并非核心部分，此处也不再赘述。\\
 	为了更直观地看到浓度分布，我们截取了部分截面与切面，在结果部分进行展示。
 	\newpage
