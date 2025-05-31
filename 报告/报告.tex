@@ -13,9 +13,9 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{listingsutf8}
+\usepackage{graphicx}
 \usepackage{geometry}
 \usepackage{xcolor}
-
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
@@ -331,13 +331,63 @@
 		C = Q0./(2*pi*u0.*sig_y.*sig_z) .* term1 .* term2;\end{lstlisting}
 	\indent 其中烟气抬升部分也分类较为繁琐且并非核心部分，此处也不再赘述。\\
 	为了更直观地看到浓度分布，我们截取了部分截面与切面，在结果部分进行展示。
-	\section*{\centerline{四、结果（与对比）}}
-	你的算法产生的结果，如果有多种算法产生的结果，需要做对比。
-	\subsection{结果展示}
-	引用图片
-	
-	\subsection{结果对比}
-	
+	\newpage
+	\setcounter{section}{4}
+	\setcounter{subsection}{0}
+	\section*{\centerline{四、结果}}
+	\subsection{考虑对数风廓线的拉格朗日模型}
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=8cm]{Logarithmic wind profile1.png}
+		\caption{扩散前期分布图}
+		\label{fig:your_label}
+	\end{figure}
+	\FloatBarrier
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=8cm]{Logarithmic wind profile2.png}
+		\caption{扩散后期分布图}
+		\label{fig:your_label}
+	\end{figure}
+	\FloatBarrier
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=8cm]{Logarithmic wind profile3.png}
+		\caption{扩散后期分布图2}
+		\label{fig:your_label}
+	\end{figure}
+	\FloatBarrier
+	\subsection{涡旋风场下的拉格朗日模型}
+	\FloatBarrier
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=10cm]{Lagrange1.png}
+		\caption{扩散后期分布图2}
+		\label{fig:your_label}
+	\end{figure}
+	\FloatBarrier
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=10cm]{Lagrange2.png}
+		\caption{扩散后期分布图2}
+		\label{fig:your_label}
+	\end{figure}
+	\FloatBarrier
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=10cm]{Lagrange3.png}
+		\caption{扩散后期分布图2}
+		\label{fig:your_label}
+	\end{figure}
+	\FloatBarrier
+	\newpage
+	\subsection{稳态下的高斯烟羽模型}
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=15cm]{gauss.png}
+		\caption{}
+		\label{fig:your_label}
+	\end{figure}
 	
 	\section*{\centerline{五、结论}}
 	实验产生了何种结论  
@@ -347,7 +397,7 @@
 	解决问题的过程中你是否发现的新的问题，或者算法仍然存在改进的地方？  
 	\newpage
 	
-	\begin{table}[!htbp]
+	\begin{table}[htbp]
 		\caption{\textbf{符号说明}}%标题
 		\centering%把表居中
 		\begin{tabular}{ccc}%内容全部居中
